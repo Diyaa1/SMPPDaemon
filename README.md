@@ -2,7 +2,7 @@
 
 This daemon keep a pressistant connection with the smpp server, and respond to any request in port 49155 
 
-Installation note:
+# Installation
 
 before running the service be sure that's port 49155 is not used.
 
