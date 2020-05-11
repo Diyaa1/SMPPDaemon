@@ -5,7 +5,7 @@ class Helpers{
     public static function getSMPPConnection(){
         
         // Construct transport and client
-        $transport = new SocketTransport(array('213.139.63.169'),3700, true, 'printDebug');
+        $transport = new SocketTransport(array('10.18.0.46'),2775, true, 'printDebug');
         $transport->setRecvTimeout(10000);
         $transport->setSendTimeout(10000);
         $smpp = new SmppClient($transport);
@@ -16,7 +16,7 @@ class Helpers{
 
         // Open the connection
         $transport->open();
-        $smpp->bindTransmitter( "client351", "B2B@351" );
+        $smpp->bindTransmitter( "invest", "inv@2020" );
 
         // Optional connection specific overrides
         SmppClient::$sms_null_terminate_octetstrings = false;
