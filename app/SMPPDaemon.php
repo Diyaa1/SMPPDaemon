@@ -23,10 +23,8 @@ $server = new Server(function (ServerRequestInterface $request) use( $smpp ) {
   if( strpos($path, 'getStatus') !== false ){
     return new Response(
         200,
-        array(
-            'Content-Type' => 'application/json'
-        ),
-        $path
+        array('Content-Type' => 'application/json'),
+        json_encode(['code' => 0 ])
     );
   }
 
