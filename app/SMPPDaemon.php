@@ -26,7 +26,7 @@ $server = new Server(function (ServerRequestInterface $request) use( $smpp ) {
         array(
             'Content-Type' => 'application/json'
         ),
-        json_encode( [$path])
+        $path
     );
   }
 
