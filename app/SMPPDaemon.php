@@ -21,10 +21,14 @@ $server = new Server(function (ServerRequestInterface $request) use( $smpp ) {
   $path = $request->getUri()->getPath();
 
   if( strpos($path, 'getStatus') !== false ){
-    return $path;
+    return new Response(
+        200,
+        array(
+            'Content-Type' => 'application/json'
+        ),
+        json_encode( [$path])
+    );
   }
-
-  print_r( $queryParams );
 
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
