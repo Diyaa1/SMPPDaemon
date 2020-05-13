@@ -1,7 +1,5 @@
 <?php
 
-use Exception;
-
 class Helpers{
     
     public static function getSMPPConnection(){
