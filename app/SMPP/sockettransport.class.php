@@ -188,9 +188,6 @@ class SocketTransport
 		$r = null;
 		$w = null;
 		$e = array($this->socket);
-		print_r($r . '   ');
-		print_r($w . '   ');
-		print_r($e . '   ');
 		$res = socket_select($r,$w,$e,0);
 		if ($res === false) throw new SocketTransportException('Could not examine socket; '.socket_strerror(socket_last_error()), socket_last_error());
 		if (!empty($e)) return false; // if there is an exception on our socket it's probably dead
@@ -336,6 +333,9 @@ class SocketTransport
 			$r = array($this->socket);
 			$w = null;
 			$e = array($this->socket);
+			print_r($r . '   ');
+			print_r($w . '   ');
+			print_r($e . '   ');
 			$res = socket_select($r,$w,$e,$readTimeout['sec'],$readTimeout['usec']);
 			
 			// check
@@ -368,6 +368,9 @@ class SocketTransport
 			$r = null;
 			$w = array($this->socket);
 			$e = array($this->socket);
+			print_r($r . '  1 ');
+			print_r($w . '  1 ');
+			print_r($e . '  1 ');
 			$res = socket_select($r,$w,$e,$writeTimeout['sec'],$writeTimeout['usec']);
 				
 			// check
