@@ -73,10 +73,10 @@ $server->listen($socket);
 //Peridcally send enquiry command
 $loop->addPeriodicTimer(5, function () use ($smpp) {
     try{
-     $smpp->respondEnquireLink();
-     $smpp->enquireLink();
+        $smpp->respondEnquireLink();
+        $smpp->enquireLink();
     } catch(Exception $e){
-	$smpp = Helpers::getSMPPConnection();
+	    $smpp = Helpers::getSMPPConnection();
     }
 });
 
