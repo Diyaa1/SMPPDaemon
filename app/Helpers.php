@@ -20,6 +20,7 @@ class Helpers{
             $transport->open();
             $smpp->bindTransmitter( "invest", "inv@2020" );
         }catch( Exception $e ){
+            $transport->close();
             $now = date('m/d/Y h:i:s a', time());
             print_r( 'Failed Connection: ' . $now );
         }
