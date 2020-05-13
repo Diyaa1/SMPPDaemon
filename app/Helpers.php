@@ -21,7 +21,7 @@ class Helpers{
             $smpp->bindTransmitter( "invest", "inv@2020" );
         }catch( Exception $e ){
             $now = date('m/d/Y h:i:s a', time());
-            print_r( 'Failed Connection: ' . $now . '\n' );
+            print_r( "Failed Connection: " . $now  . PHP_EOL );
         }
         // Optional connection specific overrides
         SmppClient::$sms_null_terminate_octetstrings = false;
