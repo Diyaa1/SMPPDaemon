@@ -5,7 +5,7 @@ class Helpers{
     public static function getSMPPConnection(){
         
         // Construct transport and client
-        $transport = new SocketTransport(array('10.18.0.46'),2775, true, 'printDebug');
+        $transport = new SocketTransport(array('10.18.0.45'),2775, true, 'printDebug');
         $transport->setRecvTimeout(10000);
         $transport->setSendTimeout(10000);
 
@@ -21,7 +21,7 @@ class Helpers{
             $smpp->bindTransmitter( "invest", "inv@2020" );
         }catch( Exception $e ){
             $now = date('m/d/Y h:i:s a', time());
-            print_r( "Failed Connection: " . $now  . PHP_EOL );
+            self::wh_log( "Failed Connection: " . $now  . PHP_EOL );
         }
         // Optional connection specific overrides
         SmppClient::$sms_null_terminate_octetstrings = false;
@@ -31,5 +31,18 @@ class Helpers{
 
         return $smpp;
     }
+
+    public static function wh_log($log_msg)
+    {
+        $log_filename = "log";
+        if (!file_exists($log_filename)) 
+        {
+            // create directory/folder uploads.
+            mkdir($log_filename, 0777, true);
+        }
+        $log_file_data = $log_filename.'/log_' . date('d-M-Y') . '.log';
+        // if you don't add `FILE_APPEND`, the file will be erased each time you add a log
+        file_put_contents($log_file_data, $log_msg . "\n", FILE_APPEND);
+    } 
 
 }
