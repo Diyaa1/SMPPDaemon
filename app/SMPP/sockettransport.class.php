@@ -285,7 +285,7 @@ class SocketTransport
 		$r = array($this->socket);
 		$w = null;
 		$e = null;
-		print_r($r . '   1   ');
+		print_r($r);
 		$res = socket_select($r,$w,$e,0);
 		if ($res === false) throw new SocketTransportException('Could not examine socket; '.socket_strerror(socket_last_error()), socket_last_error());
 		if (!empty($r)) return true;
