@@ -9,8 +9,6 @@ class Helpers{
         $transport->setRecvTimeout(10000);
         $transport->setSendTimeout(10000);
 
-        print_r( $transport );
-        
         $smpp = new SmppClient($transport);
 
         // Activate binary hex-output of server interaction
