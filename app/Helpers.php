@@ -5,7 +5,7 @@ class Helpers{
     public static function getSMPPConnection(){
         
         // Construct transport and client
-        $transport = new SocketTransport(array('10.18.0.45'),2774, true, 'printDebug');
+        $transport = new SocketTransport(array('10.18.0.46'),2774, true, 'printDebug');
         $transport->setRecvTimeout(10000);
         $transport->setSendTimeout(10000);
 
