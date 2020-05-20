@@ -14,7 +14,7 @@ $loop = React\EventLoop\Factory::create();
 
 
 //Port 49155
-$server = new Server(function (ServerRequestInterface $request) use( $smpp ) {
+$server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
 
   $queryParams = $request->getQueryParams();
 
