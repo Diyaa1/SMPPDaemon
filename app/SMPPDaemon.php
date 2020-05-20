@@ -38,6 +38,8 @@ $server = new Server(function (ServerRequestInterface $request) use( $smpp ) {
       );
   }
 
+  Helpers::wh_log('Send Request');
+
   $sender = $queryParams['senderNumber'];
   $receiver = $queryParams['receiverNumber'];
   $message = $queryParams['message'];
@@ -49,8 +51,10 @@ $server = new Server(function (ServerRequestInterface $request) use( $smpp ) {
   $reciver = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
   try{
    $response = $smpp->sendSMS( $sender,$reciver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
+   Helpers::wh_log('Success');
   }catch(Exception $e){
-     return new Response(
+    Helpers::wh_log('failed');
+    return new Response(
 	500,
 	array(
 		'Content-Type' => 'application/json'
@@ -71,7 +75,7 @@ $socket = new React\Socket\Server('0.0.0.0:49155', $loop);
 $server->listen($socket);
 
 //Peridcally send enquiry command
-$loop->addPeriodicTimer(5, function () use ($smpp) {
+$loop->addPeriodicTimer(5, function () use (&$smpp) {
     try{
         $smpp->respondEnquireLink();
         $smpp->enquireLink();
