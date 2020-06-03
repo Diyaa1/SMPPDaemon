@@ -67,7 +67,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
       array(
           'Content-Type' => 'application/json'
       ),
-      json_encode($response)
+      json_encode(['code' => 0])
   );
 });
 
@@ -80,7 +80,7 @@ $loop->addPeriodicTimer(5, function () use (&$smpp) {
         $smpp->respondEnquireLink();
         $smpp->enquireLink();
     } catch(Exception $e){
-	    $smpp = Helpers::getSMPPConnection();
+	$smpp = Helpers::getSMPPConnection();
     }
 });
 
