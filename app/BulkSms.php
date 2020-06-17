@@ -19,10 +19,10 @@ class BulkSms{
             $encodedMessage = mb_convert_encoding($message,'UTF-8','UCS-2');
             $encodedMessage = iconv('utf-8', "UCS-2BE", $message);
             
-            $sender = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
-            $receiver = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
+            $senderAddress = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
+            $receiverAddress = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
             try{
-                $smpp->sendSMS( $sender,$receiver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
+                $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
                 Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . 'Success');
             }catch(Exception $e){
                 Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . 'Failed');
