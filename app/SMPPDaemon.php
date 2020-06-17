@@ -68,7 +68,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   $receiver = $queryParams['receiverNumber'];
   $message = $queryParams['message'];
 
-  Helpers::wh_log('Send Request To Number ' . $receiver );
+
   
   $encodedMessage = mb_convert_encoding($message,'UTF-8','UCS-2');
   $encodedMessage = iconv('utf-8', "UCS-2BE", $message);
@@ -77,9 +77,9 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   $reciver = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
   try{
    $response = $smpp->sendSMS( $sender,$reciver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
-   Helpers::wh_log('Success');
+   Helpers::wh_log('Send Request To Number ' . $receiver . ' : Success');
   }catch(Exception $e){
-    Helpers::wh_log('failed');
+    Helpers::wh_log('Send Request To Number ' . $receiver . ' : Failed');
     return new Response(
 	500,
 	array(
