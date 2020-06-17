@@ -8,7 +8,7 @@ class BulkSms{
 
         $sender = $requestParam['sender'];
 
-        $keys_of_failed = [];
+        $keys_of_failed = array();
 
         Helpers::wh_log('-----====  Bulk Start ====-----');
         foreach ($requestParam['targets'] as $key => $target) {
@@ -19,9 +19,10 @@ class BulkSms{
             $encodedMessage = mb_convert_encoding($message,'UTF-8','UCS-2');
             $encodedMessage = iconv('utf-8', "UCS-2BE", $message);
             
-            $senderAddress = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
-            $receiverAddress = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
             try{
+                $senderAddress = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
+                $receiverAddress = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
+
                 $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
                 Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . 'Success');
             }catch(Exception $e){
