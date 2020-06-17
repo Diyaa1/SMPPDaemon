@@ -46,18 +46,19 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
     return BulkSms::send_bulk( $smpp, $queryParams  );
   }
 
+  print_R( $queryParams ); 
   /**
    * UnRecongnized Request 
    */
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
     Helpers::wh_log('Bad Request');
-      return new Response(
+    return new Response(
           200,
           array(
               'Content-Type' => 'application/json'
           ),"ERROR"
-      );
+    );
   }
 
 
