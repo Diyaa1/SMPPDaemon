@@ -43,8 +43,11 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
    * Send a group of messages  
    */
   if( strpos($path, 'bulk') !== false ){
-    $postDate = $request->getParsedBody();
-    return BulkSms::send_bulk( $smpp, $queryParams  );
+    $postData = $request->getParsedBody();
+
+    print_r( $postData );
+
+    return BulkSms::send_bulk( $smpp, $postData  );
   }
 
   /**
