@@ -97,7 +97,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   );
 });
 
-$socket = new React\Socket\Server('0.0.0.0:49155', $loop);
+$socket = new React\Socket\Server('0.0.0.0:49156', $loop);
 $server->listen($socket);
 
 //Peridcally send enquiry command
