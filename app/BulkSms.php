@@ -24,9 +24,9 @@ class BulkSms{
                 $receiverAddress = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
 
                 $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
-                Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . 'Success');
+                Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . ' Success');
             }catch(Exception $e){
-                Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . 'Failed');
+                Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . ' Failed');
                 $keys_of_failed[] = $key;
             }
         }
