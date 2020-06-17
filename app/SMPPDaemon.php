@@ -24,10 +24,13 @@ $loop = React\EventLoop\Factory::create();
 //Port 49155
 $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
 
-  $queryParams = $request->getQueryParams();
+  $queryParams = $request->getServerParams();
 
   $path = $request->getUri()->getPath();
 
+  /*
+   * Check if server is alive 
+   */
   if( strpos($path, 'getStatus') !== false ){
     return new Response(
         200,
@@ -36,6 +39,16 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
     );
   }
 
+  /**
+   * Send a group of messages  
+   */
+  if( strpos($path, 'bulk') !== false ){
+    return BulkSms::send_bulk( $smpp, $queryParams  );
+  }
+
+  /**
+   * UnRecongnized Request 
+   */
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
       return new Response(
@@ -47,7 +60,9 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   }
 
 
-
+ /**
+  *  Default request  
+  */
   $sender = $queryParams['senderNumber'];
   $receiver = $queryParams['receiverNumber'];
   $message = $queryParams['message'];
