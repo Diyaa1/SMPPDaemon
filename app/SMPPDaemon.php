@@ -25,6 +25,9 @@ $loop = React\EventLoop\Factory::create();
 $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
 
   $queryParams = $request->getQueryParams();
+  $serverParams = $request->getServerParams();
+  $postParams = $request->getParsedBody();
+
 
   $path = $request->getUri()->getPath();
 
@@ -43,11 +46,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
    * Send a group of messages  
    */
   if( strpos($path, 'bulk') !== false ){
-    $postData = $request->getParsedBody();
-
-    print_r( $postData );
-
-    return BulkSms::send_bulk( $smpp, $postData  );
+    return BulkSms::send_bulk( $smpp, $postParams  );
   }
 
   /**
@@ -55,7 +54,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
    */
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
-    Helpers::wh_log('Bad Request');
+    Helpers::wh_log('Bad Request From REMOTE ADDRESS ' . $serverParams['REMOTE_ADDR'] );
     return new Response(
           200,
           array(
