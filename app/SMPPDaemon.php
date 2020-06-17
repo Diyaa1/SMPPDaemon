@@ -51,6 +51,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
    */
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
+    Helpers::wh_log('Bad Request');
       return new Response(
           200,
           array(
