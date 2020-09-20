@@ -1,36 +1,64 @@
 <?php
 
 use React\Http\Response;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 class BulkSms{
 
     public static function send_bulk( $smpp, $requestParam  ){
 
+        $logger = new Logger('global_logger');
+        $logger->pushHandler(new StreamHandler('log/main.log', Logger::INFO));
+
         $sender = $requestParam['sender'];
 
         $keys_of_failed = array();
 
-        Helpers::wh_log('-----====  Bulk Start ====-----');
+        if( !count( $requestParam['targets'] )){
+            return new Response(
+                200,
+                array(
+                    'Content-Type' => 'application/json'
+                ),
+                json_encode([
+                    'code' => 0,
+                    'failed_ids' => []
+                ])
+            );
+        }
+
+        $logger->info("Bulk Send Started");
+
         foreach ($requestParam['targets'] as $key => $target) {
-            
+
             $receiver = $target['receiver'];
             $message = $target['msg'];
 
             $encodedMessage = mb_convert_encoding($message,'UTF-8','UCS-2');
             $encodedMessage = iconv('utf-8', "UCS-2BE", $message);
-            
+
             try{
                 $senderAddress = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
                 $receiverAddress = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
 
                 $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
-                Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . ' Success');
+                $logger->info("Bulk: Successful send request",[
+                    "sender"   => $sender,
+                    "receiver" => $receiver,
+                    "msg"      => $encodedMessage
+                ]);
             }catch(Exception $e){
-                Helpers::wh_log('----- Bulk In-Proggress : Send Request To Number ' . $receiver . ' Failed');
+                $logger->warning("Bulk: Failed send request", [
+                    "sender"   => $sender,
+                    "receiver" => $receiver,
+                    "msg"      => $encodedMessage
+                ]);
                 $keys_of_failed[] = $key;
             }
         }
-        Helpers::wh_log('-----====  Bulk End ====-----');
+
+        $logger->info("Bulk Send End");
 
         return new Response(
             200,

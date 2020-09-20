@@ -3,6 +3,8 @@
 use React\Http\Server;
 use React\Http\Response;
 use Psr\Http\Message\ServerRequestInterface;
+use Monolog\Logger;
+use Monolog\Handler\StreamHandler;
 
 function printDebug($str) {
     $log_filename = "log";
@@ -16,11 +18,14 @@ function printDebug($str) {
     file_put_contents($log_file_data, $str . "\n", FILE_APPEND);
 }
 
+$logger = new Logger('global_logger');
+$logger->pushHandler(new StreamHandler('log/main.log', Logger::INFO));
+
 $smpp = SMPPUtils::getSMPPConnection();
 $loop = React\EventLoop\Factory::create();
 
 //Port 49155
-$server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
+$server = new Server(function (ServerRequestInterface $request) use( &$smpp, $logger ) {
 
   $queryParams = $request->getQueryParams();
   $serverParams = $request->getServerParams();
@@ -51,7 +56,11 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
    */
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
-    Helpers::wh_log('Bad Request From REMOTE ADDRESS ' . $serverParams['REMOTE_ADDR'] );
+
+    $logger->error("Bad Request From REMOTE ADDRESS", [
+        "remote_ip" => $serverParams['REMOTE_ADDR']
+    ]);
+
     return new Response(
           200,
           array(
@@ -74,17 +83,23 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   $sender = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
   $reciver = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
   try{
-   $response = $smpp->sendSMS( $sender,$reciver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
-   Helpers::wh_log('Send Request To Number ' . $receiver . ' : Success');
+    $response = $smpp->sendSMS( $sender,$reciver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
+    $logger->info("Send Request To Number", [
+        "sender"   => $sender,
+        "receiver" => $receiver,
+        "msg"      => $encodedMessage
+    ]);
   }catch(Exception $e){
-    Helpers::wh_log('Send Request To Number ' . $receiver . ' : Failed');
+    $logger->warning("Failed Send Request To Number", [
+        "sender"   => $sender,
+        "receiver" => $receiver,
+        "msg"      => $encodedMessage
+    ]);
     return new Response(
-	500,
-	array(
-		'Content-Type' => 'application/json'
-	),
-	json_encode(['code' => 500])
-     );
+        500,
+        array('Content-Type' => 'application/json'),
+        json_encode(['code' => 500])
+    );
   }
   return new Response(
       200,
@@ -99,11 +114,12 @@ $socket = new React\Socket\Server($_ENV['LISTEN_TO'], $loop);
 $server->listen($socket);
 
 //Peridcally send enquiry command
-$loop->addPeriodicTimer(5, function () use (&$smpp) {
+$loop->addPeriodicTimer(5, function () use (&$smpp, $logger) {
     try{
         $smpp->respondEnquireLink();
         $smpp->enquireLink();
     } catch(Exception $e){
+        $logger->error("Connection to the smpp server is lost trying to connect...");
 	    $smpp = SMPPUtils::getSMPPConnection();
     }
 });
