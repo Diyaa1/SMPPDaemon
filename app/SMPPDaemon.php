@@ -84,6 +84,11 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp, $lo
   $reciver = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
   try{
     $response = $smpp->sendSMS( $sender,$reciver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
+
+    if( !$response ){
+        throw new Exception();
+    }
+
     $logger->info("Send Request To Number", [
         "sender"   => $sender,
         "receiver" => $reciver,

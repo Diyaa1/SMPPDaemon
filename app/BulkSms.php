@@ -42,7 +42,12 @@ class BulkSms{
                 $senderAddress = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
                 $receiverAddress = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
 
-                $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
+                $response = $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
+
+                if( !$response ){
+                    throw new Exception();
+                }
+
                 $logger->info("Bulk: Successful send request",[
                     "sender"   => $senderAddress,
                     "receiver" => $receiverAddress,
