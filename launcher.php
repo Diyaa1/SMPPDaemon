@@ -10,4 +10,8 @@ require_once('app/BulkSms.php');
 
 define( 'LAN_DIR',__DIR__ );
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+
 require_once 'app/SMPPDaemon.php';

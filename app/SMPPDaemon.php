@@ -6,7 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 
 function printDebug($str) {
     $log_filename = "log";
-    if (!file_exists($log_filename)) 
+    if (!file_exists($log_filename))
     {
         // create directory/folder uploads.
         mkdir($log_filename, 0777, true);
@@ -16,10 +16,8 @@ function printDebug($str) {
     file_put_contents($log_file_data, $str . "\n", FILE_APPEND);
 }
 
-$smpp = Helpers::getSMPPConnection();
+$smpp = SMPPUtils::getSMPPConnection();
 $loop = React\EventLoop\Factory::create();
-
-
 
 //Port 49155
 $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
@@ -28,11 +26,10 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   $serverParams = $request->getServerParams();
   $postParams = $request->getParsedBody();
 
-
   $path = $request->getUri()->getPath();
 
   /*
-   * Check if server is alive 
+   * Check if server is alive
    */
   if( strpos($path, 'getStatus') !== false ){
     return new Response(
@@ -43,14 +40,14 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   }
 
   /**
-   * Send a group of messages  
+   * Send a group of messages
    */
   if( strpos($path, 'bulk') !== false ){
     return BulkSms::send_bulk( $smpp, $postParams  );
   }
 
   /**
-   * UnRecongnized Request 
+   * UnRecongnized Request
    */
   if(empty($queryParams['senderNumber']) || empty($queryParams['receiverNumber']) || empty($queryParams['message']))
   {
@@ -65,17 +62,15 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
 
 
  /**
-  *  Default request  
+  *  Default request
   */
   $sender = $queryParams['senderNumber'];
   $receiver = $queryParams['receiverNumber'];
   $message = $queryParams['message'];
 
-
-  
   $encodedMessage = mb_convert_encoding($message,'UTF-8','UCS-2');
   $encodedMessage = iconv('utf-8', "UCS-2BE", $message);
-  
+
   $sender = new SmppAddress( $sender,SMPP::TON_ALPHANUMERIC );
   $reciver = new SmppAddress( $receiver ,SMPP::TON_INTERNATIONAL,SMPP::NPI_E164 );
   try{
@@ -100,7 +95,7 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp ) {
   );
 });
 
-$socket = new React\Socket\Server('0.0.0.0:49156', $loop);
+$socket = new React\Socket\Server($_ENV['LISTEN_TO'], $loop);
 $server->listen($socket);
 
 //Peridcally send enquiry command
@@ -109,7 +104,7 @@ $loop->addPeriodicTimer(5, function () use (&$smpp) {
         $smpp->respondEnquireLink();
         $smpp->enquireLink();
     } catch(Exception $e){
-	$smpp = Helpers::getSMPPConnection();
+	    $smpp = SMPPUtils::getSMPPConnection();
     }
 });
 
