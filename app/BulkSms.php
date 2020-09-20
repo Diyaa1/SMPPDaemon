@@ -44,14 +44,14 @@ class BulkSms{
 
                 $smpp->sendSMS( $senderAddress,$receiverAddress, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
                 $logger->info("Bulk: Successful send request",[
-                    "sender"   => $sender,
-                    "receiver" => $receiver,
+                    "sender"   => $senderAddress,
+                    "receiver" => $receiverAddress,
                     "msg"      => $encodedMessage
                 ]);
             }catch(Exception $e){
                 $logger->warning("Bulk: Failed send request", [
-                    "sender"   => $sender,
-                    "receiver" => $receiver,
+                    "sender"   => $senderAddress,
+                    "receiver" => $receiverAddress,
                     "msg"      => $encodedMessage
                 ]);
                 $keys_of_failed[] = $key;

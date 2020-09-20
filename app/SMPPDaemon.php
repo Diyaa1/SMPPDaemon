@@ -86,13 +86,13 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp, $lo
     $response = $smpp->sendSMS( $sender,$reciver, $encodedMessage, null, SMPP::DATA_CODING_UCS2, 0x01 );
     $logger->info("Send Request To Number", [
         "sender"   => $sender,
-        "receiver" => $receiver,
+        "receiver" => $reciver,
         "msg"      => $encodedMessage
     ]);
   }catch(Exception $e){
     $logger->warning("Failed Send Request To Number", [
         "sender"   => $sender,
-        "receiver" => $receiver,
+        "receiver" => $reciver,
         "msg"      => $encodedMessage
     ]);
     return new Response(
