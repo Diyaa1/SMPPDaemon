@@ -15,7 +15,7 @@ class BulkSms{
 
         $keys_of_failed = array();
 
-        if( !count( $requestParam['targets'] )){
+        if( $requestParam['targets'] && !count( $requestParam['targets'] )){
             return new Response(
                 200,
                 array(
