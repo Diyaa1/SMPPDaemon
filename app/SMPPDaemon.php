@@ -92,13 +92,13 @@ $server = new Server(function (ServerRequestInterface $request) use( &$smpp, $lo
     $logger->info("Send Request To Number", [
         "sender"   => $sender,
         "receiver" => $reciver,
-        "msg"      => $encodedMessage
+        "msg"      => $message
     ]);
   }catch(Exception $e){
     $logger->warning("Failed Send Request To Number", [
         "sender"   => $sender,
         "receiver" => $reciver,
-        "msg"      => $encodedMessage
+        "msg"      => $message
     ]);
     return new Response(
         500,

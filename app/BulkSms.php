@@ -51,13 +51,13 @@ class BulkSms{
                 $logger->info("Bulk: Successful send request",[
                     "sender"   => $senderAddress,
                     "receiver" => $receiverAddress,
-                    "msg"      => $encodedMessage
+                    "msg"      => $message
                 ]);
             }catch(Exception $e){
                 $logger->warning("Bulk: Failed send request", [
                     "sender"   => $senderAddress,
                     "receiver" => $receiverAddress,
-                    "msg"      => $encodedMessage
+                    "msg"      => $message
                 ]);
                 $keys_of_failed[] = $key;
             }
